@@ -9,8 +9,8 @@ prefect_data
 
 __init__.py
 
-
 .env
 .env.*
 
+!.env.example
 .ruff_cache
