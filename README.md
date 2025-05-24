@@ -26,7 +26,7 @@ Flow 2 is a more complex pipeline with four steps:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Techweirdo/prefect-workflow.git
+git clone https://github.com/bhagyajitjagdev/prefect-workflow.git
 ```
 
 2. Navigate to the project directory:
