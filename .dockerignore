@@ -1,0 +1,16 @@
+# Don't copy these to Docker
+.git
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.vscode
+.env.local
+README.md
+.gitignore
+
+# Keep these (they're needed)
+# pyproject.toml
+# uv.lock
+# app/

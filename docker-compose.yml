@@ -1,0 +1,149 @@
+services:
+  prefect-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prefect-server
+    command: prefect server start --host 0.0.0.0 --port 4200
+    ports:
+      - '4200:4200'
+    restart: unless-stopped
+    environment:
+      PREFECT_LOGGING_LEVEL: INFO
+      PREFECT_SERVER_API_HOST: 0.0.0.0
+      PREFECT_SERVER_API_PORT: 4200
+      PREFECT_API_URL: http://localhost:4200/api
+      PREFECT_API_DATABASE_CONNECTION_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      PYTHONPATH: /app/app
+    volumes:
+      - ./app:/app/app
+      - ./prefect_data:/root/.prefect
+      - ./prefect.yaml:/app/prefect.yaml
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import requests; requests.get('http://localhost:4200/api/health', timeout=5).raise_for_status()",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  prefect-worker-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prefect-worker-1
+    command: prefect worker start --pool default-pool --type process --name worker-1
+    restart: unless-stopped
+    environment:
+      PREFECT_LOGGING_LEVEL: INFO
+      PREFECT_API_URL: http://prefect-server:4200/api
+      PYTHONPATH: /app/app
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MONGODB_HOST: ${MONGODB_HOST}
+      MONGODB_PORT: ${MONGODB_PORT}
+      MONGODB_USER: ${MONGODB_USER}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - ./app:/app/app
+      - ./prefect_data:/root/.prefect
+      - ./prefect.yaml:/app/prefect.yaml
+    working_dir: /app
+    depends_on:
+      prefect-server:
+        condition: service_healthy
+
+  prefect-worker-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prefect-worker-2
+    command: prefect worker start --pool default-pool --type process --name worker-2
+    restart: unless-stopped
+    environment:
+      PREFECT_LOGGING_LEVEL: INFO
+      PREFECT_API_URL: http://prefect-server:4200/api
+      PYTHONPATH: /app/app
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MONGODB_HOST: ${MONGODB_HOST}
+      MONGODB_PORT: ${MONGODB_PORT}
+      MONGODB_USER: ${MONGODB_USER}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - ./app:/app/app
+      - ./prefect_data:/root/.prefect
+      - ./prefect.yaml:/app/prefect.yaml
+    working_dir: /app
+    depends_on:
+      prefect-server:
+        condition: service_healthy
+
+  prefect-worker-3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prefect-worker-3
+    command: prefect worker start --pool default-pool --type process --name worker-3
+    restart: unless-stopped
+    environment:
+      PREFECT_LOGGING_LEVEL: INFO
+      PREFECT_API_URL: http://prefect-server:4200/api
+      PYTHONPATH: /app/app
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MONGODB_HOST: ${MONGODB_HOST}
+      MONGODB_PORT: ${MONGODB_PORT}
+      MONGODB_USER: ${MONGODB_USER}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - ./app:/app/app
+      - ./prefect_data:/root/.prefect
+      - ./prefect.yaml:/app/prefect.yaml
+    working_dir: /app
+    depends_on:
+      prefect-server:
+        condition: service_healthy
+
+  prefect-worker-4:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prefect-worker-4
+    command: prefect worker start --pool default-pool --type process --name worker-4
+    restart: unless-stopped
+    environment:
+      PREFECT_LOGGING_LEVEL: INFO
+      PREFECT_API_URL: http://prefect-server:4200/api
+      PYTHONPATH: /app/app
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MONGODB_HOST: ${MONGODB_HOST}
+      MONGODB_PORT: ${MONGODB_PORT}
+      MONGODB_USER: ${MONGODB_USER}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - ./app:/app/app
+      - ./prefect_data:/root/.prefect
+      - ./prefect.yaml:/app/prefect.yaml
+    working_dir: /app
+    depends_on:
+      prefect-server:
+        condition: service_healthy

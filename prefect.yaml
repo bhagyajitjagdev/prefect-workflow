@@ -1,0 +1,44 @@
+# Prefect Project Configuration
+name: simple-pipeline-project
+prefect-version: 3.0.0
+
+# Build steps
+build:
+  - prefect.deployments.steps.run_shell_script:
+      script: echo "Build complete"
+
+# Deployments
+deployments:
+  # Flow 1 - Simple Pipeline
+  - name: flow1-simple-pipeline
+    version: null
+    tags:
+      - flow1
+      - simple
+      - pipeline
+    description: 'Flow 1 with Step 1, Step 2, Step 3'
+    entrypoint: ./app/flow1/flow.py:simple_pipeline_flow
+    work_pool:
+      name: default-pool
+    schedule:
+      cron: '0 */2 * * *' # Every 2 hours
+      timezone: 'UTC'
+    parameters:
+      message: 'Hello from Flow 1'
+
+  # Flow 2 - Another Pipeline
+  - name: flow2-another-pipeline
+    version: null
+    tags:
+      - flow2
+      - another
+      - pipeline
+    description: 'Flow 2 with Step A, Step B, Step C'
+    entrypoint: ./app/flow2/flow.py:another_pipeline_flow
+    work_pool:
+      name: default-pool
+    schedule:
+      cron: '30 */2 * * *' # Every 2 hours, 30 minutes offset
+      timezone: 'UTC'
+    parameters:
+      message: 'Hello from Flow 2'
